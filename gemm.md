@@ -2,34 +2,37 @@
 Xgemm() 行列x行列演算
 --------------------------
 
-$alpha A B + beta C$ の演算 (結果は、Cへ上書きされる)
+**alpha A B + beta C** の演算 (結果は、Cへ上書きされる)
 
 	// alpha*A*B + beta*C
-	cblas_dgemm( const enum CBLAS_ORDER order,
-	    const enum CBLAS_TRANSPOSE TransA,
-	    const enum CBLAS_TRANSPOSE TransB,
+	void cblas_dgemm(
+		const enum CBLAS_ORDER order,
+	    const enum CBLAS_TRANSPOSE TransA,	// 行列Aに対するオペレータ
+	    const enum CBLAS_TRANSPOSE TransB,	// 行列Bに対するオペレータ
 	    const int M,                        // 行列Aの行数
 	    const int N,                        // 行列Bの列数
 	    const int K,                        // 行列Aの列数、行列Bの行数
-	    const double alpha,                 // 行列の積に掛けるスカラ値(なければ1を設定)
+	    const double alpha,                 // 行列の積に掛けるスカラ値
 	    const double *A,                    // 行列A
 	    const int ldA,                      // Aのleading dimension (通常は行数を指定すれば良い）
 	    const double *B,                    // 行列B
 	    const int ldB,                      // Bのleading dimension
-	    const double beta,                  // 行列Cに掛けるスカラ値(なければ0を設定)
-	    double *C,                          // 行列C（ＡとＢの積） !破壊され結果が代入される
-	    const int ldc );                    // Cのleading dimension
-	
+	    const double beta,                  // 行列Cに掛けるスカラ値
+	    double *C,                          // 行列C !破壊され結果が代入される
+	    const int ldc                       // Cのleading dimension
+	);
+
 	// Orderには行列の形式を指定します。
 	enum CBLAS_ORDER {
-		CblasRowMajor=101,		// 行形式
-		CblasColMajor=102		// 列形式
+		CblasRowMajor  =101,	// 行形式
+		CblasColMajor  =102 	// 列形式
 	};
 	// TransAおよびTransBには積を求める前に行列を転置するかどうかを指定します。
 	enum CBLAS_TRANSPOSE {
-		CblasNoTrans=111,		// 転置なし
-		CblasTrans=112,			// 転置
-		CblasConjTrans=113		// 共役転置
+		CblasNoTrans     =111,	// 転置なし
+		CblasTrans       =112,	// 転置
+		CblasConjTrans   =113,	// 共役転置
+		CblasConjNoTrans =114 	// 共役
 	};
 
 
@@ -38,17 +41,19 @@ $alpha A B + beta C$ の演算 (結果は、Cへ上書きされる)
 今回は、Row-major order についてのみ扱う。(Column-majorは行と列が逆になるだけ)
 
 行列Aを以下とする。
-A =
-  1.0  2.0  3.0
-  4.0  5.0  6.0
+
+	A =
+	  1.0  2.0  3.0
+	  4.0  5.0  6.0
 
 このとき、行数(M)=2, 列数(K)=3 である。
 
 行列Bを以下とする。
-B =
-  1.0  2.0
-  3.0  4.0
-  5.0  6.0
+
+	B =
+	  1.0  2.0
+	  3.0  4.0
+	  5.0  6.0
 
 このとき、行数(K)=3, 列数(N)=2 である。
 
@@ -72,15 +77,15 @@ B =
 
 配列Aのメモリ配置と行列の配置の対応を表すと以下のようになる。
 
-A =
-  A[0]  A[1]  A[2]
-  A[3]  A[4]  A[5]
+	A =
+	  A[0]  A[1]  A[2]
+	  A[3]  A[4]  A[5]
 
 (idA = 3)を用いて表すと、
 
-A =
-  A[idA\*0 + 0]  A[idA\*0 + 1]  A[idA\*0 + 2]
-  A[idA\*1 + 0]  A[idA\*1 + 1]  A[idA\*1 + 2]
+	A =
+	  A[idA\*0 + 0]  A[idA\*0 + 1]  A[idA\*0 + 2]
+	  A[idA\*1 + 0]  A[idA\*1 + 1]  A[idA\*1 + 2]
 
 
 #### ハマったエラー
@@ -105,14 +110,16 @@ A =
 これは、以下のような意味である。
 行列Cのためのメモリは以下のように確保されている。
 
-行列C =
-  C[0]  C[1]  C[2]  C[3]
+	行列C =
+	  C[0]  C[1]  C[2]  C[3]
 
 
 このとき**AB**の結果は、2x2の行列になるので、
-  C[idC\*0+0]  C[idC\*0+1]
-  C[idC\*1+0]  C[idC\*1+1]
-へ結果を代入しようとする。このとき、idC\*1=4なので、2行目でアクセスエラーが起こってしまったのである。
+
+	  C[idC\*0+0]  C[idC\*0+1]
+	  C[idC\*1+0]  C[idC\*1+1]
+
+へ結果を代入しようとする。このとき、`idC\*1 = 4`なので、2行目でアクセスエラーが起こってしまったのである。
 
 正しくは、`idC=2`とするべきであった。
 
