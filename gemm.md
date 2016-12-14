@@ -2,6 +2,7 @@
 Xgemm() 行列x行列演算
 --------------------------
 
+行列A,B,C、実数alpha,betaに対する 
 **alpha A B + beta C** の演算 (結果は、Cへ上書きされる)
 
 	// alpha*A*B + beta*C
@@ -35,6 +36,7 @@ Xgemm() 行列x行列演算
 		CblasConjNoTrans =114 	// 共役
 	};
 
+alpha = 1.0, beta = 0.0 とすると、`C = AB`の演算になる。
 
 ## 解説
 
@@ -84,8 +86,8 @@ Xgemm() 行列x行列演算
 (idA = 3)を用いて表すと、
 
 	A =
-	  A[idA\*0 + 0]  A[idA\*0 + 1]  A[idA\*0 + 2]
-	  A[idA\*1 + 0]  A[idA\*1 + 1]  A[idA\*1 + 2]
+	  A[idA*0 + 0]  A[idA*0 + 1]  A[idA*0 + 2]
+	  A[idA*1 + 0]  A[idA*1 + 1]  A[idA*1 + 2]
 
 
 #### ハマったエラー
@@ -97,10 +99,10 @@ Xgemm() 行列x行列演算
 	double C[4];
 	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
 			3, 2, 3,	// Aの行数、Bの列数、Aの列数(Bの行数)
-			1.0,	// alpha
+			1.0,		// alpha
 			&A[0], 3,	// A
 			&B[0], 2,	// B
-			0.0,	// beta
+			0.0,		// beta
 			&C[0], 4	// C
 		);
 
@@ -116,10 +118,10 @@ Xgemm() 行列x行列演算
 
 このとき**AB**の結果は、2x2の行列になるので、
 
-	  C[idC\*0+0]  C[idC\*0+1]
-	  C[idC\*1+0]  C[idC\*1+1]
+	  C[idC*0+0]  C[idC*0+1]
+	  C[idC*1+0]  C[idC*1+1]
 
-へ結果を代入しようとする。このとき、`idC\*1 = 4`なので、2行目でアクセスエラーが起こってしまったのである。
+へ結果を代入しようとする。このとき、`idC*1 = 4`なので、2行目でアクセスエラーが起こってしまったのである。
 
 正しくは、`idC=2`とするべきであった。
 
