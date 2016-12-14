@@ -9,7 +9,7 @@ BLAS (cblas) のテストです。
 CBLAS
 --------
 
-(gemm)[gemm.md] :行列x行列演算
+[gemm](gemm.md) :行列x行列演算
 
 
 LINK
