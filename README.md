@@ -126,3 +126,7 @@ https://software.intel.com/en-us/intel-mkl/documentation
 http://d.hatena.ne.jp/spadeAJ/20101116/1289908636
 
 http://www.intel.co.jp/content/dam/www/public/ijkk/jp/ja/documents/developer/mklman52\_j.pdf
+
+## OpenBLAS
+
+http://www.openblas.net/

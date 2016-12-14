@@ -1,3 +1,9 @@
+/**
+ * This is OpenBLAS Test Code
+ * OpenBLAS User Manual: https://github.com/xianyi/OpenBLAS/wiki/User-Manual
+ * Original: https://gist.github.com/xianyi/6930656
+ **/
+
 #include <cblas.h>
 #include <stdio.h>
 
